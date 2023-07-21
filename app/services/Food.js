@@ -9,7 +9,7 @@ const Food = [
     {
         id: 2,
         name:"Burger",
-        type: 'Non-Vegan',
+        type: 'Fruit',
         price:'R5.90',
         image: require('../assets/sq1.jpg')
     },
@@ -36,42 +36,42 @@ const Food = [
     },
     {
         id: 6,
-        name:"Burger",
+        name:"Fish",
         type: 'Vegan',
         price:'R5.90',
         image: require('../assets/sq1.jpg')
     },
     {
         id: 7,
-        name:"Burger",
+        name:"Steak",
         type: 'Vegan',
         price:'R5.90',
         image: require('../assets/sq1.jpg')
     },
     {
         id: 8,
-        name:"Burger",
+        name:"Chicken",
         type: 'Vegan',
         price:'R5.90',
         image: require('../assets/sq1.jpg')
     },
     {
         id: 9,
-        name:"Burger",
+        name:"Ham",
         type: 'Vegan',
         price:'R5.90',
         image: require('../assets/sq1.jpg')
     },
     {
         id: 10,
-        name:"Burger",
+        name:"Polony",
         type: 'Vegan',
         price:'R5.90',
         image: require('../assets/sq1.jpg')
     },
     {
         id: 11,
-        name:"Burger",
+        name:"Cheese",
         type: 'Vegan',
         price:'R5.90',
         image: require('../assets/sq1.jpg')
@@ -79,3 +79,11 @@ const Food = [
 ]
 
 export default Food;
+
+export function getFood() {
+    return Food;
+}
+
+export function getFoodById(id) {
+    return Food.find((food) => food.id ==id)
+}

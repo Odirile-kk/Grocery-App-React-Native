@@ -6,17 +6,23 @@ import Welcome from "./Screens/Welcome";
 import Details from "./Screens/Details";
 import Cart from "./Screens/Cart";
 import Login from "./Screens/Login";
+
+
+
+
 const App = () => {
   const Stack = createNativeStackNavigator();
   return (
+   
     <Stack.Navigator style={styles.main}>
-    <Stack.Screen options={{ headerShown: false}} name="Welcome" component={Welcome}/>
-    <Stack.Screen options={{ headerShown: false}} name="Login" component={Login}/>
+    {/* <Stack.Screen options={{ headerShown: false}} name="Welcome" component={Welcome}/>
+    <Stack.Screen options={{ headerShown: false}} name="Login" component={Login}/> */}
       <Stack.Screen options={{ headerShown: false}} name="Home" component={Home}/>
       
       <Stack.Screen options={{ headerShown: false}} name="Details" component={Details}/>
       <Stack.Screen options={{ headerShown: false}} name="Cart" component={Cart}/>
     </Stack.Navigator>
+
     
   );
 }
