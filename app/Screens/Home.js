@@ -10,9 +10,8 @@ import {
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { FlatList } from "react-native-gesture-handler";
-import Food from "../services/Food";
+import foodData from "../services/Food";
 import { Dimensions } from "react-native";
-import { BlurView } from "react-native-blur";
 import { useNavigation } from "expo-router";
 
 //getting size from the screen width
@@ -22,11 +21,35 @@ const cardWidth = width / 2 - 20;
 const Home = () => {
   const nav = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [cartItems, setCartItems] = useState([])
 
   // Filter the data based on the search query
-  const filteredData = Food.filter((item) =>
+  const filteredData = foodData.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const addToCart = (foodData) => {
+    const existingItem = cartItems.find((item) => item.id === foodData.id);
+    try{
+    if (existingItem) {
+      // If the item already exists in the cart, update the counter
+      const updatedCartItems = cartItems.map((item) =>
+        item.id === foodData.id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
+      setCartItems(updatedCartItems);
+    } else {
+      // If the item is not in the cart, add it with a quantity of 1
+      setCartItems([...cartItems, { ...foodData, quantity: 1 }]);
+    }
+  }
+  catch (err) {
+    console.log(err)
+  }
+    
+  };
+
 
   // Cards view
   const renderCard = ({ item }) => {
@@ -54,13 +77,9 @@ const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>{item.price}</Text>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>R{item.price}</Text>
           <TouchableOpacity
-            style={styles.addToCart}
-            onPress={() => {
-              foodItem: item;
-            }}
-          >
+            style={styles.addToCart} onPress={() => addToCart(item)} >
             <Icon name="add" size={20} color={"white"} />
           </TouchableOpacity>
         </View>
@@ -83,8 +102,8 @@ const Home = () => {
             What are you looking for today?
           </Text>
         </View>
-        <TouchableOpacity onPress={() => nav.navigate('Cart')}>
-          <Icon name="cart" size={28} />
+        <TouchableOpacity onPress={() => nav.navigate('Cart', { cartItems: cartItems })}>
+          <Icon name="add" size={28} />
           <Text></Text>
         </TouchableOpacity>
       </View>

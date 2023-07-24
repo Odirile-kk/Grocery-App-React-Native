@@ -1,11 +1,7 @@
 import { StyleSheet, Text, View, SafeAreaView, Image, ScrollView, TouchableOpacity, ImageBackground } from "react-native";
 import React from "react";
-import { Button } from "@rneui/themed";
-import Food, { getFoodById} from "../services/Food";
 
-
-
-const Details = ({ route, getFoodById }) => {
+const Details = ({ route }) => {
   const { foodItem } = route.params;
 
   return (
@@ -42,45 +38,14 @@ const Details = ({ route, getFoodById }) => {
                 fontWeight: 'bold',
                 fontSize: 16,
               }}>
-              {foodItem.price}
+              R{foodItem.price}
             </Text>
             </View>
         <Text style={{ fontSize: 20, marginTop: 4, color: "gray" }}>
           {foodItem.type}
         </Text>
-        <Text style={{marginTop: 10}}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-          </Text>
-
-          
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                top: 32,
-                marginHorizontal: '30%'
-              }}>
-              <TouchableOpacity style={styles.borderBtn}>
-                <Text style={styles.borderBtnText}>-</Text>
-              </TouchableOpacity>
-              <Text
-                style={{
-                  fontSize: 20,
-                  marginHorizontal: 10,
-                  fontWeight: 'bold',
-                }}>
-                1
-              </Text>
-              <TouchableOpacity style={styles.borderBtn}>
-                <Text style={styles.borderBtnText}>+</Text>
-              </TouchableOpacity>
-            </View>
-
-          <View style={{backgroundColor: 'black', marginTop: 40, height: '15%', width: '50%', justifyContent: 'center', alignItems: 'center', borderRadius: 25, marginHorizontal: '25%'}} >
-          <TouchableOpacity activeOpacity={0.1} >
-          <Text style={styles.title}>Add to cart</Text>
-          </TouchableOpacity>
-          </View>
-          
+        <Text style={{marginTop: 10}}>{foodItem.description}
+          </Text>          
       </View>
         </View>
         
@@ -115,8 +80,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 40,
     justifyContent: 'center',
-    // borderTopLeftRadius: 25,
-    // borderBottomLeftRadius: 25,
     borderRadius: 25,
     marginHorizontal:300
   },

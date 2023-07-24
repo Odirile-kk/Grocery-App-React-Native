@@ -1,17 +1,40 @@
 import { StyleSheet, Text, View, SafeAreaView, Image, Button, TouchableOpacity} from "react-native";
-import React from "react";
+import React, {useState} from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { FlatList } from "react-native-gesture-handler";
-import Food from "../services/Food";
+// import Food from "../services/Food";
 import { useNavigation } from 'expo-router';
+import payment from '../Payment'
 
 
+const Cart = ({route}) => {
+  const cartItems = route.params.cartItems;
+  const [cartData, setCartData] = useState(cartItems);
+  const nav = useNavigation()
 
-const Cart = () => {
+  const getTotalPrice = () => {
+    return cartData.reduce((total, item) => total + (parseFloat(item.price) * item.quantity), 0);
+  };
+  
 
-    const nav = useNavigation()
 
-    const route = () => {
+  const incrementItem = (itemId) => {
+    const updatedCart = cartData.map((item) =>
+      item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+    );
+    setCartData(updatedCart);
+  };
+
+  const decrementItem = (itemId) => {
+    const updatedCart = cartData.map((item) =>
+      item.id === itemId
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
+    ).filter(item => item.quantity > 0);
+    setCartData(updatedCart);
+  };
+
+    const routeHome = () => {
         try{
             nav.navigate('Home');
             console.log('done')
@@ -22,10 +45,11 @@ const Cart = () => {
         } 
 
   const CardView = ({ item }) => {
+    const quantity = item.quantity || 1;
     return (
       <View style={styles.cart}>
         <Image
-          source={item.image}
+           source={item.image}
           style={{ height: 100, width: 100, borderRadius: 60 }}
         ></Image>
         <View
@@ -39,12 +63,12 @@ const Cart = () => {
             {item.price}
           </Text>
           <View style={{ alignItems: "flex-end", top: -40 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 18 }}>2</Text>
+          {/*number of itens in the cart */}
+            <Text style={{ fontWeight: "bold", fontSize: 18 }}>{item.quantity}</Text>
+            {/*increment and decrement */}
             <View style={styles.plusBtn}>
-            <TouchableOpacity><Icon name="remove" size={24} color="#fff"></Icon></TouchableOpacity>
-            <TouchableOpacity><Icon name="add" size={24} color="#fff"></Icon></TouchableOpacity>
-              
-              
+            <TouchableOpacity onPress={() => decrementItem(item.id)}><Icon name="remove" size={24} color="#fff"></Icon></TouchableOpacity>
+            <TouchableOpacity onPress={() => incrementItem(item.id)}><Icon name="add" size={24} color="#fff"></Icon></TouchableOpacity>
             </View>
           </View>
         </View>
@@ -56,7 +80,7 @@ const Cart = () => {
     
     <SafeAreaView style={{ }}>
       <View style={styles.header}>
-      <TouchableOpacity activeOpacity={0.1} onPress={route}>
+      <TouchableOpacity activeOpacity={0.1} onPress={routeHome}>
       <Icon name="arrow-back-ios" size={28} color={"black"} />
       </TouchableOpacity>
         <Text style={{ fontSize: 30, marginLeft: 120, color: "black" }}>
@@ -67,8 +91,9 @@ const Cart = () => {
         <FlatList
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 50 }}
-          data={Food}
-          renderItem={({ item }) => <CardView item={item} />}
+          data={cartData}
+        renderItem={CardView}
+        keyExtractor={(item) => item.id.toString()}
         />
       </View>
 
@@ -86,15 +111,13 @@ const Cart = () => {
             flexDirection: "row",
             justifyContent: "space-between",
             marginTop: 30,
-           
-
           }}
         >
-          <Text style={{ fontSize: 25, fontWeight: "bold",  color: 'white' }}>Total price</Text>
-          <Text style={{ fontSize: 25, fontWeight: "bold",  color: 'white'  }}>R180</Text>
+          <Text style={{ fontSize: 25, fontWeight: "bold", color: 'white' }}>Total price: R{getTotalPrice()}</Text>
         </View>
+          {/*checkout button */}
         <View style={{backgroundColor: 'white', marginTop: 18, height: '20%', width: '70%', justifyContent: 'center', alignItems: 'center', borderRadius: 25, marginHorizontal: '15%'}} >
-          <TouchableOpacity activeOpacity={0.1} >
+          <TouchableOpacity activeOpacity={0.1} onPress={()=> nav.navigate('Payment')}>
           <Text style={styles.title}>Checkout</Text>
           </TouchableOpacity>
           </View>

@@ -9,27 +9,40 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
-import { StatusBar } from "expo-status-bar";
-import Food from "../services/Food";
-import LinearGradient from "react-native-linear-gradient";
+import React, {useState} from "react";
+import {authorisation} from '../firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword  } from 'firebase/auth'
 import { useNavigation } from "expo-router";
 
-// const {width, height} = Dimensions.get('window')
 
 const Welcome = () => {
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
     const nav = useNavigation()
 
-    const route = () => {
-        try{
-            nav.navigate('Home');
-            console.log('done')
+    const handleSignUp = () => {
+      createUserWithEmailAndPassword(authorisation, email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          // nav.replace('Home')
+          console.log(user.email);
+        })
+        .catch((error) => alert(error.message));
+    };
+    
+    const handleSignIn = () => {
+      signInWithEmailAndPassword(authorisation, email, password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          nav.replace('Home')
+          console.log('yay!');
+        })
+        .catch((error) => alert(error.message));
     }
-    catch(err){
-        console.log(err)
-    }
-        } 
+
+
   return (
     <ImageBackground style={{ backgroundColor: "white" }}>
       {/*Top view */}
@@ -42,8 +55,8 @@ const Welcome = () => {
       {/*Bottom view */}
       <View style={styles.details}>
         <View style={styles.inputContainer}>
-          <TextInput placeholder="Email" style={styles.input}></TextInput>
-          <TextInput placeholder="Password" style={styles.input1}></TextInput>
+          <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={text => setEmail(text)} ></TextInput>
+          <TextInput placeholder="Password" style={styles.input1}  value={password} onChangeText={text => setPassword(text)} secureTextEntry></TextInput>
         </View>
         <View
           style={{
@@ -57,7 +70,7 @@ const Welcome = () => {
             marginHorizontal: "24%",
           }}
         >
-          <TouchableOpacity activeOpacity={0.1}>
+          <TouchableOpacity activeOpacity={0.1} onPress={handleSignUp}>
             <Text style={styles.title}>Register</Text>
           </TouchableOpacity>
         </View>
@@ -73,7 +86,7 @@ const Welcome = () => {
             marginHorizontal: "24%",
           }}
         >
-          <TouchableOpacity activeOpacity={0.1} onPress={route}>
+          <TouchableOpacity activeOpacity={0.1} onPress={handleSignIn}>
             <Text style={styles.title}>Login</Text>
           </TouchableOpacity>
         </View>
@@ -93,7 +106,6 @@ const styles = StyleSheet.create({
   image: {
     height: "100%",
     width: "100%",
-    // borderBottomRightRadius: 120,
   },
   details: {
     backgroundColor: "white",
