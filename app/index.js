@@ -6,14 +6,16 @@ import Welcome from "./Screens/Welcome";
 import Details from "./Screens/Details";
 import Cart from "./Screens/Cart";
 import Login from "./Screens/Login";
-import Payment from "./Payment";
-
+import Payment from "./Screens/Payment";
+import store from './store'
+import { Provider } from "react-redux";
+import AuthorizationScreen from './Screens/AuthorizationScreen';
 
 
 const App = () => {
   const Stack = createNativeStackNavigator();
   return (
-   
+   <Provider store={store}>
     <Stack.Navigator style={styles.main}>
     <Stack.Screen options={{ headerShown: false}} name="Welcome" component={Welcome}/>
     <Stack.Screen options={{ headerShown: false}} name="Login" component={Login}/>
@@ -21,8 +23,9 @@ const App = () => {
       <Stack.Screen options={{ headerShown: false}} name="Details" component={Details}/>
       <Stack.Screen options={{ headerShown: false}} name="Cart" component={Cart}/>
       <Stack.Screen options={{ headerShown: false}} name="Payment" component={Payment}/>
+      <Stack.Screen name="AuthorizationScreen" component={AuthorizationScreen} />
     </Stack.Navigator>
-    
+    </Provider>
   );
 }
 

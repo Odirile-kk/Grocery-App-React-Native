@@ -6,6 +6,7 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ImageBackground
 } from "react-native";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/MaterialIcons";
@@ -13,6 +14,10 @@ import { FlatList } from "react-native-gesture-handler";
 import foodData from "../services/Food";
 import { Dimensions } from "react-native";
 import { useNavigation } from "expo-router";
+import {handleAddToCart} from '../Redux/cartSlice'
+import { useSelector, useDispatch } from "react-redux";
+import {incrementQuantity, decrementQuantity} from '../Redux/cartSlice'
+
 
 //getting size from the screen width
 const { width } = Dimensions.get("screen");
@@ -22,34 +27,23 @@ const Home = () => {
   const nav = useNavigation();
   const [searchQuery, setSearchQuery] = useState("");
   const [cartItems, setCartItems] = useState([])
-
+  const dispatch = useDispatch()
   // Filter the data based on the search query
   const filteredData = foodData.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const addToCart = (foodData) => {
-    const existingItem = cartItems.find((item) => item.id === foodData.id);
-    try{
-    if (existingItem) {
-      // If the item already exists in the cart, update the counter
-      const updatedCartItems = cartItems.map((item) =>
-        item.id === foodData.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-      setCartItems(updatedCartItems);
-    } else {
-      // If the item is not in the cart, add it with a quantity of 1
-      setCartItems([...cartItems, { ...foodData, quantity: 1 }]);
-    }
-  }
-  catch (err) {
-    console.log(err)
-  }
-    
+  const addToCart = (item) => {
+    dispatch(handleAddToCart(item))
   };
 
+  const incrementItem = (id) => {
+    dispatch(incrementQuantity({ id }));
+  };
+  const decrementItem = (item) => {
+    console.log('dispatch')
+    dispatch(decrementQuantity( item ));
+  };
 
   // Cards view
   const renderCard = ({ item }) => {
@@ -77,39 +71,48 @@ const Home = () => {
             justifyContent: "space-between",
           }}
         >
-          <Text style={{ fontSize: 18, fontWeight: "bold" }}>R{item.price}</Text>
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>R{item.price/100}</Text>
+          
+          <TouchableOpacity  style={styles.addToCart} onPress={() => decrementItem(item)}>
+          <Icon name="horizontal-rule" size={20} color={"white"} />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.addToCart} onPress={() => addToCart(item)} >
             <Icon name="add" size={20} color={"white"} />
           </TouchableOpacity>
+
+         
+          
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView >
+    
       {/* Header View */}
       <View style={styles.header}>
         <View>
           <View style={{ flexDirection: "row" }}>
-            <Text style={{ fontSize: 28 }}>Hello,</Text>
-            <Text style={{ fontSize: 28, fontWeight: "bold", marginLeft: 10 }}>
-              Mpho
-            </Text>
+            <Text style={{ fontSize: 28, marginTop: 35 }}>Hello,</Text>
+           
           </View>
-          <Text style={{ marginTop: 5, fontSize: 22, color: "gray" }}>
+          <Text style={{ marginTop: 10, fontSize: 22, color: "gray" }}>
             What are you looking for today?
           </Text>
         </View>
         <TouchableOpacity onPress={() => nav.navigate('Cart', { cartItems: cartItems })}>
-          <Icon name="add" size={28} />
-          <Text></Text>
+          <Icon name="shopping-cart" size={28} />
+          
         </TouchableOpacity>
+        
       </View>
+     
+
       {/* Search View */}
       <View
-        style={{ marginTop: 40, flexDirection: "row", paddingHorizontal: 20 }}
+        style={{ marginTop: 0, flexDirection: "row", paddingHorizontal: 20 }}
       >
         <View style={styles.inputContainer}>
           {/* Insert search icon here */}
@@ -122,6 +125,7 @@ const Home = () => {
           <Icon name="search" size={30} style={{ justifyContent: "center" }} />
         </View>
       </View>
+       
       {/* List items view */}
       <FlatList
         showsVerticalScrollIndicator={false}
@@ -130,6 +134,7 @@ const Home = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderCard}
       />
+
     </SafeAreaView>
   );
 };
@@ -140,6 +145,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 20,
+    // backgroundColor: 'black',
+    height: 150
   },
   inputContainer: {
     flex: 1,
