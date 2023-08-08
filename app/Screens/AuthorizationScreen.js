@@ -1,9 +1,20 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
 import { WebView } from 'react-native-webview';
+import { clearCart } from '../Redux/cartSlice';
+import { useNavigation } from 'expo-router';
+import { useDispatch } from 'react-redux';
 
 const AuthorizationScreen = ({ route }) => {
   const { authorizationURL } = route.params;
+  const dispatch = useDispatch()
+  const navigation = useNavigation()
+
+  const handlePaymentSuccess = () => {
+    dispatch(clearCart()); 
+    navigation.navigate('Home'); 
+  };
+
 
   return (
     <View style={styles.container}>
@@ -15,6 +26,7 @@ const AuthorizationScreen = ({ route }) => {
         javaScriptEnabled
         domStorageEnabled
       />
+       <Button title="Clear Cart and Go Back" onPress={handlePaymentSuccess} style={{}}/>
     </View>
   );
 };
